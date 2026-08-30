@@ -1,35 +1,14 @@
 <?php
+namespace pocketmine\network\protocol\p70;
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
-namespace pocketmine\network\protocol;
-
-#include <rules/DataPacket.h>
-
+use pocketmine\utils\p70\Binary;
 
 use pocketmine\inventory\FurnaceRecipe;
 use pocketmine\inventory\ShapedRecipe;
 use pocketmine\inventory\ShapelessRecipe;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentList;
-use pocketmine\utils\BinaryStream;
+use pocketmine\utils\p70\BinaryStream;
 
 class CraftingDataPacket extends DataPacket{
 	const NETWORK_ID = Info::CRAFTING_DATA_PACKET;
@@ -42,7 +21,7 @@ class CraftingDataPacket extends DataPacket{
 
 	/** @var object[] */
 	public $entries = [];
-	public $cleanRecipes = false;
+	public $cleanRecipes = \false;
 
 	private static function writeEntry($entry, BinaryStream $stream){
 		if($entry instanceof ShapelessRecipe){
@@ -91,7 +70,7 @@ class CraftingDataPacket extends DataPacket{
 	}
 
 	private static function writeFurnaceRecipe(FurnaceRecipe $recipe, BinaryStream $stream){
-		if($recipe->getInput()->getDamage() !== null){ //Data recipe
+		if($recipe->getInput()->getDamage() !== 0){ //Data recipe
 			$stream->putInt(($recipe->getInput()->getId() << 16) | ($recipe->getInput()->getDamage()));
 			$stream->putSlot($recipe->getResult());
 
@@ -110,7 +89,7 @@ class CraftingDataPacket extends DataPacket{
 		for($i = 0; $i < $list->getSize(); ++$i){
 			$entry = $list->getSlot($i);
 			$stream->putInt($entry->getCost());
-			$stream->putByte(count($entry->getEnchantments()));
+			$stream->putByte(\count($entry->getEnchantments()));
 			foreach($entry->getEnchantments() as $enchantment){
 				$stream->putInt($enchantment->getId());
 				$stream->putInt($enchantment->getLevel());
@@ -147,25 +126,25 @@ class CraftingDataPacket extends DataPacket{
 	}
 
 	public function encode(){
-		$this->reset();
-		$this->putInt(count($this->entries));
+		$this->buffer = chr(self::NETWORK_ID); $this->offset = 0;;
+		$this->buffer .= pack("N", \count($this->entries));
 
 		$writer = new BinaryStream();
 		foreach($this->entries as $d){
 			$entryType = self::writeEntry($d, $writer);
 			if($entryType >= 0){
-				$this->putInt($entryType);
-				$this->putInt(strlen($writer->getBuffer()));
-				$this->put($writer->getBuffer());
+				$this->buffer .= pack("N", $entryType);
+				$this->buffer .= pack("N", \strlen($writer->getBuffer()));
+				$this->buffer .= $writer->getBuffer();
 			}else{
-				$this->putInt(-1);
-				$this->putInt(0);
+				$this->buffer .= pack("N", -1);
+				$this->buffer .= pack("N", 0);
 			}
 
 			$writer->reset();
 		}
 
-		$this->putByte($this->cleanRecipes ? 1 : 0);
+		$this->buffer .= chr($this->cleanRecipes ? 1 : 0);
 	}
 
 }

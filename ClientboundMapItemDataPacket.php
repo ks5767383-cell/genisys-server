@@ -1,7 +1,7 @@
 <?php
 
 
-namespace pocketmine\network\protocol;
+namespace pocketmine\network\protocol\p70;
 
 use pocketmine\utils\Color;
 

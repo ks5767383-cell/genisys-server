@@ -1,7 +1,7 @@
 <?php
 
+namespace pocketmine\network\protocol\p70;
 
-namespace pocketmine\network\protocol;
 
 class MapInfoRequestPacket extends DataPacket {
 

@@ -1,28 +1,7 @@
 <?php
+namespace pocketmine\network\protocol\p70;
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
- *
-*/
-
-namespace pocketmine\network\protocol;
-
-#include <rules/DataPacket.h>
-
+use pocketmine\utils\p70\Binary;
 
 class AnimatePacket extends DataPacket{
 	const NETWORK_ID = Info::ANIMATE_PACKET;
@@ -31,14 +10,14 @@ class AnimatePacket extends DataPacket{
 	public $eid;
 
 	public function decode(){
-		$this->action = $this->getByte();
-		$this->eid = $this->getLong();
+		$this->action = ord($this->get(1));
+		$this->eid = Binary::readLong($this->get(8));
 	}
 
 	public function encode(){
-		$this->reset();
-		$this->putByte($this->action);
-		$this->putLong($this->eid);
+		$this->buffer = chr(self::NETWORK_ID); $this->offset = 0;;
+		$this->buffer .= chr($this->action);
+		$this->buffer .= Binary::writeLong($this->eid);
 	}
 
 }
