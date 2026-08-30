@@ -22,7 +22,8 @@
 /**
  * Various Utilities used around the code
  */
-namespace pocketmine\utils;
+namespace pocketmine\utils\p70;
+
 use pocketmine\entity\Entity;
 
 class Binary{

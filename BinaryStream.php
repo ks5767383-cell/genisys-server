@@ -17,7 +17,7 @@
  * 
  *
 */
-namespace pocketmine\utils;
+namespace pocketmine\utils\p70;
 #include <rules/DataPacket.h>
 #ifndef COMPILE
 #endif
@@ -179,7 +179,7 @@ class BinaryStream extends \stdClass{
 		return UUID::fromBinary($this->get(16));
 	}
 
-	public function putUUID(/*UUID*/ $uuid){
+	public function putUUID(/*\pocketmine\utils\UUID*/ $uuid){
 		$this->put($uuid->toBinary());
 	}
 

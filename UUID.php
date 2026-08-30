@@ -19,7 +19,7 @@
  *
 */
 
-namespace pocketmine\utils;
+namespace pocketmine\utils\p70;
 
 class UUID{
 
@@ -39,7 +39,12 @@ class UUID{
 		return $this->version;
 	}
 
-	public function equals(/*UUID*/ $uuid){
+
+    /**
+     * @param \pocketmine\utils\UUID $uuid
+     * @return bool
+     */
+    public function equals(/*UUID*/ $uuid){
 		return $uuid->parts[0] === $this->parts[0] and $uuid->parts[1] === $this->parts[1] and $uuid->parts[2] === $this->parts[2] and $uuid->parts[3] === $this->parts[3];
 	}
 
